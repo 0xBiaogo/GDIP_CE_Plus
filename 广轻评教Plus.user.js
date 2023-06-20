@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         广钦评教Plus
+// @name         广轻评教Plus
 // @namespace    none
 // @version      0.1
-// @description  广钦评教Plus
+// @description  广轻评教Plus
 // @author       Biaogo
 // @match        https://my.gdip.edu.cn/EducationEvaluation/EducationEvaluation-EvaluationFillAdd*
 // @grant        none
