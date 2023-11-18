@@ -10,6 +10,8 @@
 (function () {
     'use strict';
 
+    var hasClickedNextTask = false;
+
     function playVideo() {
         var playButton = document.querySelector('.prism-play-btn');
         if (playButton && !playButton.classList.contains('playing')) {
@@ -18,6 +20,9 @@
     }
 
     function clickNextTask() {
+        if (hasClickedNextTask) return;
+        hasClickedNextTask = true;
+
         var treeItems = document.querySelectorAll('.el-tree-node');
         var currentItemIndex = -1;
 
@@ -38,19 +43,43 @@
         }
     }
 
-    setInterval(playVideo, 1000);
+    function timeStringToSeconds(timeStr) {
+        var parts = timeStr.split(':').map(Number);
+        var seconds = 0;
+        for (var i = 0; i < parts.length; i++) {
+            seconds = seconds * 60 + parts[i];
+        }
+        return seconds;
+    }
 
-    setInterval(function () {
+    function waitForVideoAndStartIntervals() {
+        var videoElement = document.querySelector('video');
+
+        if (videoElement) {
+            setTimeout(function() {
+                setInterval(playVideo, 1000);
+                setInterval(checkVideoEndAndClickNextTask, 1000);
+            }, 1000);
+        } else {
+            setTimeout(waitForVideoAndStartIntervals, 1000);
+        }
+    }
+
+    function checkVideoEndAndClickNextTask() {
+        if (hasClickedNextTask) return;
+
         var currentTimeElement = document.querySelector('.current-time');
         var durationElement = document.querySelector('.duration');
 
         if (currentTimeElement && durationElement) {
-            var currentTime = currentTimeElement.textContent;
-            var duration = durationElement.textContent;
+            var currentTime = timeStringToSeconds(currentTimeElement.textContent);
+            var duration = timeStringToSeconds(durationElement.textContent);
 
-            if (currentTime === duration) {
+            if (currentTime >= duration) {
                 clickNextTask();
             }
         }
-    }, 1000);
+    }
+
+    waitForVideoAndStartIntervals();
 })();
